@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 function InputArea({ onSendMessage }) {
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
-    onSendMessage(message);
+    axios.post(process.env.REACT_APP_CHATGPT_CLONE_BE_URL + '/messages', { message })
+      .then(response => {
+        onSendMessage({ text: message, isBot: false });
+        onSendMessage({ text: response.data.reply, isBot: true });
+      })
+      .catch(error => console.error('Error:', error));
     setMessage('');
   };
 
